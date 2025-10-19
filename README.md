@@ -44,6 +44,14 @@ Predict flood probability (continuous target ranging from 0.285 to 0.725) throug
 ### Target Variable
 - **FloodProbability**: Continuous probability value ranging from 0.285 to 0.725
 
+## 📊 Evaluation Framework
+
+**R² Score (Coefficient of Determination)**
+- **Interpretation Scale**: 
+  - 1.0: Perfect predictive accuracy
+  - 0.0: Equivalent to mean prediction
+  - <0.0: Inferior to simple averaging
+
 ## 🏗️ Project Architecture
 
 ### Phase 1: Comprehensive EDA & Multi-Model Benchmarking
@@ -90,7 +98,7 @@ Predict flood probability (continuous target ranging from 0.285 to 0.725) throug
 
 ## 🛠️ Advanced Feature Engineering
 
-### Statistical Feature Synthesis (24 New Features)
+### 1. Statistical Feature Synthesis (24 New Features)
 
 **Distribution Statistics**:
 - `fmax`, `fmin`: Range indicators across feature set
@@ -109,9 +117,11 @@ Predict flood probability (continuous target ranging from 0.285 to 0.725) throug
 - `fskew`, `fkurtosis`: Distribution shape metrics
 - `fgeom_mean`, `fharm_mean`: Alternative central tendency measures
 
-### Innovative Target Encoding
+### 2. Innovative Target Encoding
 
 #### Gaussian Process Encoding
+
+- Implemented customTargetEncodingTransformer class that leverages Gaussian Process Regression (GPR) to transform the aggregated sum of original features into a continuous, probabilistically-encoded representation. This advanced encoding method captures the complex, non-linear relationship between feature aggregates and flood probability with built-in uncertainty quantification.
 
 ```python
 class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
@@ -133,7 +143,7 @@ class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
 
 ## 📈 Comprehensive Model Benchmarking
 
-### Linear Models Performance Comparison (cross-validated)
+### 1. Linear Models Performance Comparison (cross-validated)
 
 | Model | CV R² | Categorical Features | Numerical Features |
 |-------|-------|----------------------|--------------------|
@@ -148,7 +158,7 @@ class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
 | **Lasso** | -3.1e-06 | Original features | |
 | **Lasso** | -3.1e-06 | | Original features |
 
-### Tree-Based Models Performance Hierarchy (cross-validated)
+### 2. Tree-Based Models Performance Hierarchy (cross-validated)
 
 | Model | CV R² | Numerical Features |
 |-------|-------|----------------|
@@ -170,13 +180,19 @@ class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
 | **LightGBM** | 0.7665 | Original Features |
 | **HistGradientBoosting** | 0.7664 | Original features |
 
-### 🚀 Bayesian-Optimized CatBoost Implementation
+## 🚀 Bayesian-Optimized CatBoost Implementation
 
-#### Optimization Architecture
+### 1. Model Architecture
 
-**Search Space Definition**:
+**CatBoost Regressor Configuration:**:
 
 ```python
+FIXED_PARAMS = {
+    'boosting_type': 'Plain',
+    'grow_policy': 'Lossguide', 
+    'task_type': 'GPU'
+}
+
 TUNING_PARAMS = {
     'regressor__n_estimators': (1000, 3000),
     'regressor__max_depth': (6, 10),
@@ -187,7 +203,37 @@ TUNING_PARAMS = {
 }
 ```
 
-#### 📊 Cross-Validation Performance
+### 2. Bayesian Optimization Strategy
+
+#### BayesSearchCV Configuration:
+- Iterations: 50 Bayesian optimization rounds
+- Cross-Validation: 5-fold with random state 42
+- Scoring: R² metric
+- Random State: 0 for reproducible optimization
+
+#### Training Strategy:
+- 5-Fold Cross-Validation with consistent random state
+- GPU Acceleration for efficient training
+- Ensemble Prediction by averaging fold predictions
+
+### 3. Performance Results
+
+#### Bayesian Optimization Results
+
+**Best Hyperparameters Found**:
+
+```python
+{
+    'learning_rate': 0.01,
+    'max_depth': 10, 
+    'min_child_samples': 93,
+    'n_estimators': 1000,
+    'num_leaves': 372,
+    'reg_lambda': 1e-05
+}
+```
+
+**Cross-Validation Performance**:
 
 | Fold | Validation R² |
 |------|---------------|
@@ -196,13 +242,22 @@ TUNING_PARAMS = {
 | 3 | 0.8691 |
 | 4 | 0.8693 |
 | 5 | 0.8693 |
-| Mean | 0.8693 |
 
-**Aggregate Performance**:
+**Final Model Performance**:
 - **Mean Validation R²**: 0.8693
+- **Best Bayesian Search R²**: 0.8693
+- **Training Time**: ~4 hours (GPU accelerated)
 - **Performance Stability**: Exceptional cross-fold consistency
 
-### 🏆 Model Performance Summary
+### 4. Feature Importance Insights
+
+**Top Predictive Features**:
+- **ftarget_enc** - Gaussian process target encoding (dominant)
+- **fsum** - Sum of all features (highly correlated with target)
+
+**Key Insight**: Engineered statistical features and target encoding provide significantly more predictive power than original features alone.
+
+## 🏆 Model Performance Summary
 
 1. **🥇 Bayesian CatBoost**: 0.8693 R² (Champion Model)
 2. **🥈 LightGBM Tuned**: 0.8690 R² (Strong Contender)
@@ -210,39 +265,19 @@ TUNING_PARAMS = {
 
 ## 🛠️ Technical Implementation
 
-### Computational Environment
-- **Processing**: GPU-accelerated training (CatBoost GPU support)
-- **Memory**: Optimized data structures and dtype management
-- **Parallelization**: Efficient cross-validation and hyperparameter search
-- **Scalability**: Designed for large-scale dataset processing
+### Libraries Used
+- **pandas, numpy** - Data manipulation and numerical computing
+- **matplotlib, seaborn** - Visualization and plotting
+- **scipy, statsmodels** - Statistical testing and analysis
+- **scikit-learn** - Preprocessing, metrics, and pipeline construction
+- **xgboost, lightgbm, catboost, HistGradientBoostingRegressor** - Gradient boosting implementations
+- **skopt** - Bayesian optimization library
+- **scikit-learn GPR** - Gaussian Process Regression for target encoding
 
-### Library Ecosystem
-- **Core Data**: pandas, numpy
-- **Visualization**: matplotlib, seaborn
-- **Statistics**: scipy, statsmodels
-- **Machine Learning**: scikit-learn, catboost, xgboost, lightgbm
-- **Optimization**: scikit-optimize (Bayesian methods)
-- **Advanced Modeling**: Gaussian Process Regression
-
-## 📊 Evaluation Framework
-
-**R² Score (Coefficient of Determination)**
-- **Interpretation Scale**: 
-  - 1.0: Perfect predictive accuracy
-  - 0.0: Equivalent to mean prediction
-  - <0.0: Inferior to simple averaging
-
-## 💡 Key Insights & Strategic Decisions
-
-### Data Understanding
-- **Synthetic Origin**: Poisson-distributed features indicate generated data
-- **Ordinal Semantics**: Categorical features exhibit clear ordinal relationships
-- **Aggregate Signal**: Individual features weak, combinations powerful
-
-### Modeling Strategy
-- **Feature Engineering Priority**: Statistical aggregates crucial for performance
-- **Algorithm Diversity**: Comprehensive benchmarking informs final selection
-- **Optimization Investment**: Bayesian methods justify computational cost
+### Key Features:
+- Gaussian Process transformation for categorical feature engineering
+- Stratified cross-validation for robust evaluation
+- GPU-accelerated training with CatBoost
 
 ## 🔮 Future Development Directions
 
