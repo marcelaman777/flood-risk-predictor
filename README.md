@@ -279,32 +279,88 @@ TUNING_PARAMS = {
 - Stratified cross-validation for robust evaluation
 - GPU-accelerated training with CatBoost
 
-## 🔮 Future Development Directions
+## 🔮 Future Work
 
-### Immediate Enhancements
-- **Advanced Ensembles**: Model stacking and blending strategies
-- **Feature Interaction**: Domain-informed feature combinations
-- **Neural Approaches**: Deep learning for complex pattern recognition
+### Model Improvements
+- **Advanced Ensembles**: Stacking and blending techniques
+- **Neural Networks**: DNNs for capturing complex interactions
+- **Feature Interactions**: Creating interaction terms
 
-### Technical Extensions
-- **Interpretability**: SHAP analysis for model transparency
-- **Automation**: Automated feature engineering pipelines
-- **Deployment**: Production-ready model serving infrastructure
+### Technical Enhancements
+- SHAP Analysis: For model interpretability
+- Cross-Validation: Group-based cross-validation
+- Model Calibration: Ensuring probability calibration
+- Deployment Pipeline: API for real-time predictions
 
-### Research Opportunities
-- **Domain Adaptation**: Transfer learning for related flood datasets
-- **Uncertainty Quantification**: Probabilistic prediction intervals
-- **Causal Analysis**: Feature impact on flood risk mitigation
+## 📚 References
 
-## 📚 Reference Architecture
+### Competition & Data
+- [Kaggle Competition: Playground Series S4E5](https://www.kaggle.com/competitions/playground-series-s4e5)
+- [Original Dataset: Flood Prediction Factors](https://www.kaggle.com/datasets/brijlaldhankour/flood-prediction-factors)
 
-### Methodological Foundations
-- [Scikit-learn Model Selection](https://scikit-learn.org/stable/model_selection.html)
+## Technical References
+- [Scikit-learn Documentation](https://scikit-learn.org/)
+- [XGBoost Documentation](https://xgboost.readthedocs.io/) 
+- [LightGBM Documentation](https://lightgbm.readthedocs.io/)
+- [CatBoost Documentation](https://catboost.ai/)
+- [Anderson-Darling K-Sample Test](https://faculty.washington.edu/fscholz/Papers/ADk.pdf)
 - [Bayesian Optimization Principles](https://arxiv.org/abs/1807.02811)
 - [Gaussian Process Regression](https://gaussianprocess.org/gpml/)
 
-### Implementation Resources
-- [CatBoost Advanced Features](https://catboost.ai/en/docs/)
-- [Feature Engineering Techniques](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.feature_selection)
-- [Hyperparameter Optimization Strategies](https://www.kaggle.com/code/willkoehrsen/automated-model-tuning)
+## 🌟 Achievement Summary
+
+This project demonstrates a complete, production-grade machine learning pipeline achieving competitive performance (R² = 0.8693) through systematic methodology, rigorous experimentation, and advanced optimization techniques. The comprehensive approach from exploratory analysis to optimized modeling provides both practical solutions and methodological insights for regression challenges in environmental prediction domains.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+```python
+pip install pandas numpy matplotlib seaborn scipy scikit-learn statsmodels xgboost lightgbm catboost
+```
+
+### Usage
+
+#### 1. Clone this repository:
+
+```python
+git clone https://github.com/marcelaman777/flood-risk-predictor.git
+```
+
+#### 2. Navigate to the project directory:
+
+```python
+cd flood-risk-predictor
+```
+
+#### 3. Run the main notebook:
+
+```python
+# Complete pipeline: EDA + Feature Engineering + Model Training
+jupyter notebook flood-prediction-eda-linear-tree-based-models.ipynb
+```
+
+#### 4. Alternative: Run individual components (if separated):
+
+```python
+# Exploratory Data Analysis & Statistical Testing
+flood-prediction-eda-linear-tree-based-models.ipynb
+
+# Model Training & Ensemble Optimization
+flood-prediction-eda-linear-tree-based-models.ipynb
+
+# Feature Engineering & Gaussian Process Encoding
+flood-prediction-catb-bayes-opt-target-enc.ipynb 
+```
+
+## 📁 Project Structure
+
+```python
+flood-risk-predictor/
+├── .gitignore                                            # Git ignore rules
+├── LICENSE                                               # MIT License file
+├── README.md                                             # Project documentation
+├── flood-prediction-eda-linear-tree-based-models.ipynb   # Main notebook: Comprehensive EDA & Multi-Model Benchmarking
+└── flood-prediction-catb-bayes-opt-target-enc.ipynb      # Advanced Feature Engineering & Bayesian-Optimized CatBoost
+```
 
