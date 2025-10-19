@@ -109,9 +109,9 @@ Predict flood probability (continuous target ranging from 0.285 to 0.725) throug
 - `fskew`, `fkurtosis`: Distribution shape metrics
 - `fgeom_mean`, `fharm_mean`: Alternative central tendency measures
 
-## Innovative Target Encoding
+### Innovative Target Encoding
 
-### Gaussian Process Encoding
+#### Gaussian Process Encoding
 
 ```python
 class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
@@ -121,5 +121,87 @@ class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
         # Calculate mean flood probability per fsum value
         # Implement GPR for robust encoding of unseen values
         # Create smooth encoding surface
+```
+
+#### Encoding Feature Suite
+
+- **ftarget_enc**: GPR-based probabilistic encoding
+- **fesp_q25th**: Expected value using 25th percentile weighting  
+- **fesp_q75th**: Expected value using 75th percentile weighting
+
+**Final Feature Space**: 47 dimensions (20 original + 24 statistical + 3 encoding)
+
+## 📈 Comprehensive Model Benchmarking
+
+### Linear Models Performance Comparison (cross-validated)
+
+| Model | CV R² | Categorical Features | Numerical Features |
+|-------|-------|----------------------|--------------------|
+| **Ridge** | 0.8667 | Original features + \[ fsum, fmedian, fmin, fmax \] | \[ fstd, fmean+std, fmean-std \] |
+| **Ridge** | 0.8665 | Original features + \[ fsum, fmedian, fmin, fmax \] | |
+| **Ridge** | 0.8665 | Original features + \[ fsum \] | |
+| **Ridge** | 0.8460 | Original features | stats features |
+| **Ridge** | 0.8456 | Original features | |
+| **Linear** | 0.8456 | Original features | |
+| **Ridge** | 0.8451 | | Original features |
+| **Linear** | 0.8451 | | Original features |
+| **Lasso** | -3.1e-06 | Original features | |
+| **Lasso** | -3.1e-06 | | Original features |
+
+### Tree-Based Models Performance Hierarchy (cross-validated)
+
+| Model | CV R² | Numerical Features |
+|-------|-------|----------------|
+| **LightGBM Tuned** | 0.8690 | Original + stats Features |
+| **CatBoost** | 0.8689 | Original + stats features |
+| **CatBoost Tuned** | 0.8688 | Original + stats features |
+| **HistGradientBoosting Tuned** | 0.8687 | Original + stats features |
+| **LightGBM** | 0.8687 | Original + stats Features |
+| **HistGradientBoosting** | 0.8686 | Original + stats features |
+| **XGBoost Tuned** | 0.8686 | Original + stats features |
+| **XGBoost** | 0.8686 | Original + stats features |
+| **CatBoost** | 0.8675 | Original features + \[ fsum \] |
+| **LightGBM** | 0.8672 | Original Features + \[ fsum \] |
+| **XGBoost** | 0.8672 | Original features + \[ fsum \] |
+| **HistGradientBoosting** | 0.8671 | Original features + \[ fsum \] |
+| **CatBoost** | 0.8463 | Original features |
+| **XGBoost** | 0.8102 | Original features |
+| **LightGBM** | 0.7665 | Original Features |
+| **HistGradientBoosting** | 0.7664 | Original features |
+
+### Feature Engineering Impact Analysis
+
+| Feature Strategy | R² Improvement | Relative Gain |
+|------------------|----------------|---------------|
+| **Base Features Only** | 0.8632 | Reference |
+| **+ Statistical Features** | +0.0055 | +0.64% |
+| **+ Sum Feature Only** | +0.0033 | +0.38% |
+| **+ Target Encoding** | +0.0005 | +0.06% |
+| **Full Feature Suite** | **0.8693** | **+0.71%** |
+
+### Hyperparameter Optimization Results
+
+| Optimization Method | Best R² | Iterations | Time Investment |
+|---------------------|----------|------------|-----------------|
+| **Default Parameters** | 0.8688 | - | Minimal |
+| **Random Search** | 0.8689 | 50 | Moderate |
+| **Grid Search** | 0.8689 | 100+ | High |
+| **Bayesian Optimization** | **0.8693** | 50 | High (GPU) |
+
+## 🚀 Bayesian-Optimized CatBoost Implementation
+
+### Optimization Architecture
+
+**Search Space Definition**:
+
+```python
+TUNING_PARAMS = {
+    'regressor__n_estimators': (1000, 3000),
+    'regressor__max_depth': (6, 10),
+    'regressor__num_leaves': (31, 511),
+    'regressor__learning_rate': (0.01, 0.03),
+    'regressor__min_child_samples': (1, 120),
+    'regressor__reg_lambda': (0.00001, 100.0, 'log-uniform')
+}
 ```
 
