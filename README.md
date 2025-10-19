@@ -79,7 +79,7 @@ Predict flood probability (continuous target ranging from 0.285 to 0.725) throug
 ### 4. Correlation & Relationship Mapping
 **Multi-Method Correlation Analysis**: 
 - Assuming that all features are actually ordinal:
-  - **Feature-Target Correlations (Spearman's method)**: Minimal individual correlations (all < 0.18)
+  - **Feature-Target Correlations (Spearman's method)**: Minimal individual correlations (all < 0.19)
   - **Feature Inter-correlations (Spearman's method)**: Negligible relationships between predictors
 - **Key Discovery**: Sum of features shows exceptional correlation (R² = 0.844) with target
 
@@ -152,6 +152,7 @@ class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
 
 | Model | CV R² | Numerical Features |
 |-------|-------|----------------|
+| **Bayesian CatBoost** | 0.8693 | Advanced Feature Engineering |
 | **LightGBM Tuned** | 0.8690 | Original + stats Features |
 | **CatBoost** | 0.8689 | Original + stats features |
 | **CatBoost Tuned** | 0.8688 | Original + stats features |
@@ -169,28 +170,9 @@ class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
 | **LightGBM** | 0.7665 | Original Features |
 | **HistGradientBoosting** | 0.7664 | Original features |
 
-### Feature Engineering Impact Analysis
+### 🚀 Bayesian-Optimized CatBoost Implementation
 
-| Feature Strategy | R² Improvement | Relative Gain |
-|------------------|----------------|---------------|
-| **Base Features Only** | 0.8632 | Reference |
-| **+ Statistical Features** | +0.0055 | +0.64% |
-| **+ Sum Feature Only** | +0.0033 | +0.38% |
-| **+ Target Encoding** | +0.0005 | +0.06% |
-| **Full Feature Suite** | **0.8693** | **+0.71%** |
-
-### Hyperparameter Optimization Results
-
-| Optimization Method | Best R² | Iterations | Time Investment |
-|---------------------|----------|------------|-----------------|
-| **Default Parameters** | 0.8688 | - | Minimal |
-| **Random Search** | 0.8689 | 50 | Moderate |
-| **Grid Search** | 0.8689 | 100+ | High |
-| **Bayesian Optimization** | **0.8693** | 50 | High (GPU) |
-
-## 🚀 Bayesian-Optimized CatBoost Implementation
-
-### Optimization Architecture
+#### Optimization Architecture
 
 **Search Space Definition**:
 
@@ -204,4 +186,90 @@ TUNING_PARAMS = {
     'regressor__reg_lambda': (0.00001, 100.0, 'log-uniform')
 }
 ```
+
+#### 📊 Cross-Validation Performance
+
+| Fold | Validation R² |
+|------|---------------|
+| 1 | 0.8691 |
+| 2 | 0.8697 |
+| 3 | 0.8691 |
+| 4 | 0.8693 |
+| 5 | 0.8693 |
+| Mean | 0.8693 |
+
+**Aggregate Performance**:
+- **Mean Validation R²**: 0.8693
+- **Performance Stability**: Exceptional cross-fold consistency
+
+### 🏆 Model Performance Summary
+
+1. **🥇 Bayesian CatBoost**: 0.8693 R² (Champion Model)
+2. **🥈 LightGBM Tuned**: 0.8690 R² (Strong Contender)
+3. **🥉 CatBoost**: 0.8689 R² (Feature Engineering Showcase)
+
+## 🛠️ Technical Implementation
+
+### Computational Environment
+- **Processing**: GPU-accelerated training (CatBoost GPU support)
+- **Memory**: Optimized data structures and dtype management
+- **Parallelization**: Efficient cross-validation and hyperparameter search
+- **Scalability**: Designed for large-scale dataset processing
+
+### Library Ecosystem
+- **Core Data**: pandas, numpy
+- **Visualization**: matplotlib, seaborn
+- **Statistics**: scipy, statsmodels
+- **Machine Learning**: scikit-learn, catboost, xgboost, lightgbm
+- **Optimization**: scikit-optimize (Bayesian methods)
+- **Advanced Modeling**: Gaussian Process Regression
+
+## 📊 Evaluation Framework
+
+**R² Score (Coefficient of Determination)**
+- **Interpretation Scale**: 
+  - 1.0: Perfect predictive accuracy
+  - 0.0: Equivalent to mean prediction
+  - <0.0: Inferior to simple averaging
+
+## 💡 Key Insights & Strategic Decisions
+
+### Data Understanding
+- **Synthetic Origin**: Poisson-distributed features indicate generated data
+- **Ordinal Semantics**: Categorical features exhibit clear ordinal relationships
+- **Aggregate Signal**: Individual features weak, combinations powerful
+
+### Modeling Strategy
+- **Feature Engineering Priority**: Statistical aggregates crucial for performance
+- **Algorithm Diversity**: Comprehensive benchmarking informs final selection
+- **Optimization Investment**: Bayesian methods justify computational cost
+
+## 🔮 Future Development Directions
+
+### Immediate Enhancements
+- **Advanced Ensembles**: Model stacking and blending strategies
+- **Feature Interaction**: Domain-informed feature combinations
+- **Neural Approaches**: Deep learning for complex pattern recognition
+
+### Technical Extensions
+- **Interpretability**: SHAP analysis for model transparency
+- **Automation**: Automated feature engineering pipelines
+- **Deployment**: Production-ready model serving infrastructure
+
+### Research Opportunities
+- **Domain Adaptation**: Transfer learning for related flood datasets
+- **Uncertainty Quantification**: Probabilistic prediction intervals
+- **Causal Analysis**: Feature impact on flood risk mitigation
+
+## 📚 Reference Architecture
+
+### Methodological Foundations
+- [Scikit-learn Model Selection](https://scikit-learn.org/stable/model_selection.html)
+- [Bayesian Optimization Principles](https://arxiv.org/abs/1807.02811)
+- [Gaussian Process Regression](https://gaussianprocess.org/gpml/)
+
+### Implementation Resources
+- [CatBoost Advanced Features](https://catboost.ai/en/docs/)
+- [Feature Engineering Techniques](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.feature_selection)
+- [Hyperparameter Optimization Strategies](https://www.kaggle.com/code/willkoehrsen/automated-model-tuning)
 
