@@ -55,11 +55,11 @@ Predict flood probability (continuous target ranging from 0.285 to 0.725) throug
 ## 🏗️ Project Architecture
 
 ### Phase 1: Comprehensive EDA & Multi-Model Benchmarking
-**File**: `flood-prediction-eda-linear-tree-based-models.ipynb`  
+**File**: [flood-prediction-eda-linear-tree-based-models.ipynb](https://github.com/marcelaman777/flood-risk-predictor/blob/main/flood-prediction-eda-linear-tree-based-models.ipynb)  
 *Complete statistical analysis, distribution profiling, and systematic comparison of 15+ regression models across linear and tree-based families*
 
-### Phase 2: Advanced Feature Engineering & Bayesian-Optimized CatBoost
-**File**: `flood-prediction-catb-bayes-opt-target-enc.ipynb`  
+### Phase 2: Advanced Feature Engineering & Bayesian-Optimized CatBoost 
+**File**: [flood-prediction-catb-bayes-opt-target-enc.ipynb](https://github.com/marcelaman777/flood-risk-predictor/blob/main/flood-prediction-catb-bayes-opt-target-enc.ipynb)   
 *Sophisticated feature engineering with 24 statistical features, Gaussian process target encoding, and Bayesian-optimized CatBoost regression*
 
 ## 🔍 Comprehensive EDA Methodology
@@ -135,9 +135,9 @@ class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
 
 #### Encoding Feature Suite
 
-- **ftarget_enc**: GPR-based probabilistic encoding
-- **fesp_q25th**: Expected value using 25th percentile weighting  
-- **fesp_q75th**: Expected value using 75th percentile weighting
+- `ftarget_enc`: GPR-based probabilistic encoding
+- `fesp_q25th`: Expected value using 25th percentile weighting  
+- `fesp_q75th`: Expected value using 75th percentile weighting
 
 **Final Feature Space**: 47 dimensions (20 original + 24 statistical + 3 encoding)
 
@@ -145,40 +145,40 @@ class TargetEncodingTransformer(TransformerMixin, BaseEstimator):
 
 ### 1. Linear Models Performance Comparison (cross-validated)
 
-| Model | CV R² | Categorical Features | Numerical Features |
-|-------|-------|----------------------|--------------------|
-| **Ridge** | 0.8667 | Original features + \[ fsum, fmedian, fmin, fmax \] | \[ fstd, fmean+std, fmean-std \] |
-| **Ridge** | 0.8665 | Original features + \[ fsum, fmedian, fmin, fmax \] | |
-| **Ridge** | 0.8665 | Original features + \[ fsum \] | |
-| **Ridge** | 0.8460 | Original features | stats features |
-| **Ridge** | 0.8456 | Original features | |
-| **Linear** | 0.8456 | Original features | |
-| **Ridge** | 0.8451 | | Original features |
-| **Linear** | 0.8451 | | Original features |
-| **Lasso** | -3.1e-06 | Original features | |
-| **Lasso** | -3.1e-06 | | Original features |
+| Model      | CV R²    | Categorical Features                                | Numerical Features               | Params       |
+|------------|----------|-----------------------------------------------------|----------------------------------|--------------|
+| **Ridge**  | 0.8667   | Original features + \[ fsum, fmedian, fmin, fmax \] | \[ fstd, fmean+std, fmean-std \] | alpha = 20.0 | 
+| **Ridge**  | 0.8665   | Original features + \[ fsum, fmedian, fmin, fmax \] |                                  | alpha = 0.5  | 
+| **Ridge**  | 0.8665   | Original features + \[ fsum \]                      |                                  | alpha = 1.0  | 
+| **Ridge**  | 0.8460   | Original features                                   | stats features                   | alpha = 12.5 | 
+| **Ridge**  | 0.8456   | Original features                                   |                                  | alpha = 0.5  | 
+| **Linear** | 0.8456   | Original features                                   |                                  | -            | 
+| **Ridge**  | 0.8451   |                                                     | Original features                | alpha = 1.0  | 
+| **Linear** | 0.8451   |                                                     | Original features                | -            | 
+| **Lasso**  | -3.1e-06 | Original features                                   |                                  | alpha = 0.5  | 
+| **Lasso**  | -3.1e-06 |                                                     | Original features                | alpha = 0.5  | 
 
 ### 2. Tree-Based Models Performance Hierarchy (cross-validated)
 
-| Model | CV R² | Numerical Features |
-|-------|-------|----------------|
-| **Bayesian CatBoost** | 0.8693 | Advanced Feature Engineering |
-| **LightGBM Tuned** | 0.8690 | Original + stats Features |
-| **CatBoost** | 0.8689 | Original + stats features |
-| **CatBoost Tuned** | 0.8688 | Original + stats features |
-| **HistGradientBoosting Tuned** | 0.8687 | Original + stats features |
-| **LightGBM** | 0.8687 | Original + stats Features |
-| **HistGradientBoosting** | 0.8686 | Original + stats features |
-| **XGBoost Tuned** | 0.8686 | Original + stats features |
-| **XGBoost** | 0.8686 | Original + stats features |
-| **CatBoost** | 0.8675 | Original features + \[ fsum \] |
-| **LightGBM** | 0.8672 | Original Features + \[ fsum \] |
-| **XGBoost** | 0.8672 | Original features + \[ fsum \] |
-| **HistGradientBoosting** | 0.8671 | Original features + \[ fsum \] |
-| **CatBoost** | 0.8463 | Original features |
-| **XGBoost** | 0.8102 | Original features |
-| **LightGBM** | 0.7665 | Original Features |
-| **HistGradientBoosting** | 0.7664 | Original features |
+| Model                          | CV R²  | Numerical Features             | Params | 
+|--------------------------------|--------|--------------------------------|--------|
+| **Bayesian CatBoost**          | 0.8693 | Advanced Feature Engineering   | learning_rate=0.01, max_depth=10, min_child_samples=93, n_estimators=1000, num_leaves=372, reg_lambda=1e-05 |
+| **LightGBM Tuned**             | 0.8690 | Original + stats Features      | num_leaves=84, subsample=0.8875455478014229 |
+| **CatBoost**                   | 0.8689 | Original + stats features      | default |
+| **CatBoost Tuned**             | 0.8688 | Original + stats features      | colsample_bylevel=0.9570717167427539, max_depth=6 |
+| **HistGradientBoosting Tuned** | 0.8687 | Original + stats features      | max_iter=200, n_iter_no_change=50, early_stopping=True, max_depth= 10 |
+| **LightGBM**                   | 0.8687 | Original + stats Features      | default |
+| **HistGradientBoosting**       | 0.8686 | Original + stats features      | default, early_stopping=True | 
+| **XGBoost Tuned**              | 0.8686 | Original + stats features      | max_leaves=183, subsample=0.9542719837724802 |
+| **XGBoost**                    | 0.8686 | Original + stats features      | default |
+| **CatBoost**                   | 0.8675 | Original features + \[ fsum \] | default |
+| **LightGBM**                   | 0.8672 | Original Features + \[ fsum \] | default |
+| **XGBoost**                    | 0.8672 | Original features + \[ fsum \] | default |
+| **HistGradientBoosting**       | 0.8671 | Original features + \[ fsum \] | default, early_stopping=True |
+| **CatBoost**                   | 0.8463 | Original features              | default |
+| **XGBoost**                    | 0.8102 | Original features              | default |
+| **LightGBM**                   | 0.7665 | Original Features              | default |
+| **HistGradientBoosting**       | 0.7664 | Original features              | default, early_stopping=True |
 
 ## 🚀 Bayesian-Optimized CatBoost Implementation
 
@@ -245,15 +245,14 @@ TUNING_PARAMS = {
 
 **Final Model Performance**:
 - **Mean Validation R²**: 0.8693
-- **Best Bayesian Search R²**: 0.8693
 - **Training Time**: ~4 hours (GPU accelerated)
 - **Performance Stability**: Exceptional cross-fold consistency
 
 ### 4. Feature Importance Insights
 
 **Top Predictive Features**:
-- **ftarget_enc** - Gaussian process target encoding (dominant)
-- **fsum** - Sum of all features (highly correlated with target)
+- `ftarget_enc` - Gaussian process target encoding (dominant)
+- `fsum` - Sum of all features (highly correlated with target)
 
 **Key Insight**: Engineered statistical features and target encoding provide significantly more predictive power than original features alone.
 
@@ -296,9 +295,8 @@ TUNING_PARAMS = {
 
 ### Competition & Data
 - [Kaggle Competition: Playground Series S4E5](https://www.kaggle.com/competitions/playground-series-s4e5)
-- [Original Dataset: Flood Prediction Factors](https://www.kaggle.com/datasets/brijlaldhankour/flood-prediction-factors)
 
-## Technical References
+### Technical References
 - [Scikit-learn Documentation](https://scikit-learn.org/)
 - [XGBoost Documentation](https://xgboost.readthedocs.io/) 
 - [LightGBM Documentation](https://lightgbm.readthedocs.io/)
@@ -307,7 +305,7 @@ TUNING_PARAMS = {
 - [Bayesian Optimization Principles](https://arxiv.org/abs/1807.02811)
 - [Gaussian Process Regression](https://gaussianprocess.org/gpml/)
 
-## 🌟 Achievement Summary
+## 🏆 Achievement Summary
 
 This project demonstrates a complete, production-grade machine learning pipeline achieving competitive performance (R² = 0.8693) through systematic methodology, rigorous experimentation, and advanced optimization techniques. The comprehensive approach from exploratory analysis to optimized modeling provides both practical solutions and methodological insights for regression challenges in environmental prediction domains.
 
@@ -316,7 +314,7 @@ This project demonstrates a complete, production-grade machine learning pipeline
 ### Prerequisites
 
 ```python
-pip install pandas numpy matplotlib seaborn scipy scikit-learn statsmodels xgboost lightgbm catboost
+pip install pandas numpy matplotlib seaborn scipy scikit-learn statsmodels xgboost lightgbm catboost skopt
 ```
 
 ### Usage
@@ -344,13 +342,13 @@ jupyter notebook flood-prediction-eda-linear-tree-based-models.ipynb
 
 ```python
 # Exploratory Data Analysis & Statistical Testing
-flood-prediction-eda-linear-tree-based-models.ipynb
+jupyter notebook flood-prediction-eda-linear-tree-based-models.ipynb
 
 # Model Training & Ensemble Optimization
-flood-prediction-eda-linear-tree-based-models.ipynb
+jupyter notebook flood-prediction-eda-linear-tree-based-models.ipynb
 
 # Feature Engineering & Gaussian Process Encoding
-flood-prediction-catb-bayes-opt-target-enc.ipynb 
+jupyter notebook flood-prediction-catb-bayes-opt-target-enc.ipynb 
 ```
 
 ## 📁 Project Structure
